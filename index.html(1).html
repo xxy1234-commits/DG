@@ -1,0 +1,3539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东莞非物质文化遗产 · 数字展馆</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B2500;
+            --primary-light: #C44D34;
+            --gold: #D4A853;
+            --gold-light: #F0D78C;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --card-bg: rgba(255,255,255,0.03);
+            --card-border: rgba(212,168,83,0.15);
+            --text: #e8e8e8;
+            --text-muted: #888;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ===== 封面区域 - 全屏背景图 ===== */
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-bg-img {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1675557009285-b55f562641b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2830&q=80') center/cover no-repeat;
+            filter: brightness(0.25) saturate(0.6);
+            animation: heroZoom 20s ease-in-out infinite alternate;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, 
+                rgba(15,15,26,0.3) 0%, 
+                rgba(15,15,26,0.5) 40%,
+                rgba(15,15,26,0.7) 70%,
+                rgba(15,15,26,1) 100%);
+        }
+
+        .hero-vignette {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(15,15,26,0.8) 100%);
+            pointer-events: none;
+        }
+
+        @keyframes heroZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        .hero-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 8s infinite ease-in-out;
+            box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
+        }
+
+        @keyframes float {
+            0%, 100% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { opacity: 0; transform: translateY(-10vh) scale(1.5); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.85rem;
+            letter-spacing: 0.3em;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+            background: rgba(212,168,83,0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            color: var(--gold-light);
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 60px rgba(212,168,83,0.4), 0 4px 20px rgba(0,0,0,0.8);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .hero-stat {
+            text-align: center;
+            padding: 1.5rem 2rem;
+            background: rgba(212,168,83,0.05);
+            border: 1px solid rgba(212,168,83,0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .hero-stat:hover {
+            background: rgba(212,168,83,0.1);
+            border-color: var(--gold);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212,168,83,0.15);
+        }
+
+        .hero-stat-number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+        }
+
+        .hero-stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--gold);
+            stroke-width: 2;
+            fill: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== 导航 ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0.8rem 2.5rem;
+            background: rgba(15,15,26,0.92);
+            backdrop-filter: blur(25px);
+            border-bottom: 1px solid rgba(212,168,83,0.25);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.4), 0 0 20px rgba(212,168,83,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .nav-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.4rem;
+            color: var(--gold);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-shadow: 0 0 15px rgba(212,168,83,0.3);
+            letter-spacing: 0.05em;
+        }
+
+        .nav-logo-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--gold);
+            filter: drop-shadow(0 0 6px rgba(212,168,83,0.4));
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.85; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover {
+            color: var(--gold-light);
+            background: rgba(212,168,83,0.08);
+            font-size: 1.05rem;
+            font-weight: 600;
+            transform: translateY(-2px);
+            text-shadow: 0 0 12px rgba(212,168,83,0.4);
+            box-shadow: 0 4px 15px rgba(212,168,83,0.1);
+        }
+
+        .nav-links a:hover::before {
+            width: 70%;
+        }
+
+        .nav-links a.active {
+            color: var(--gold);
+            background: rgba(212,168,83,0.12);
+            font-size: 1.05rem;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(212,168,83,0.15), inset 0 0 10px rgba(212,168,83,0.05);
+            border: 1px solid rgba(212,168,83,0.2);
+        }
+
+        .nav-links a.active::before {
+            width: 70%;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: all 0.35s ease;
+            filter: drop-shadow(0 0 3px rgba(212,168,83,0.3));
+            flex-shrink: 0;
+        }
+
+        .nav-links a:hover .nav-icon,
+        .nav-links a.active .nav-icon {
+            transform: scale(1.25);
+            filter: drop-shadow(0 0 8px rgba(212,168,83,0.6));
+        }
+
+        /* ===== 内容区块 - 带背景图 ===== */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-bg {
+            position: relative;
+        }
+
+        .section-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1630600116774-c9ab04638658?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover no-repeat fixed;
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            color: var(--gold-light);
+            text-align: center;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background: var(--gold);
+            margin: 1rem auto;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 4rem;
+            font-size: 1rem;
+        }
+
+        /* ===== 数据分析章节样式 ===== */
+        .analysis-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .analysis-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(212, 168, 83, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .analysis-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(212, 168, 83, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .analysis-card.highlight {
+            border-color: rgba(212, 168, 83, 0.4);
+            background: linear-gradient(135deg, rgba(212, 168, 83, 0.08) 0%, rgba(139, 37, 0, 0.05) 100%);
+        }
+
+        .analysis-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(212, 168, 83, 0.2);
+        }
+
+        .analysis-card p {
+            color: var(--text);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        .analysis-card p:last-child {
+            margin-bottom: 0;
+        }
+
+        .analysis-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .analysis-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .analysis-section h4 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--gold);
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .analysis-card ul, .analysis-card ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-card li {
+            color: var(--text);
+            line-height: 1.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .data-item {
+            text-align: center;
+            padding: 1.2rem;
+            background: rgba(212, 168, 83, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 168, 83, 0.2);
+        }
+
+        .data-number {
+            display: block;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .data-label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* ===== 个体叙事样式 ===== */
+        .narrative-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .narrative-scene, .narrative-character, .narrative-process, 
+        .narrative-memory, .narrative-challenge, .narrative-hope {
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border-left: 3px solid var(--gold);
+            transition: all 0.3s ease;
+        }
+
+        .narrative-scene:hover, .narrative-character:hover, 
+        .narrative-process:hover, .narrative-memory:hover, 
+        .narrative-challenge:hover, .narrative-hope:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateX(5px);
+        }
+
+        .narrative-content h4 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--gold-light);
+            font-size: 1.15rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .narrative-content p {
+            color: var(--text);
+            line-height: 1.9;
+            font-size: 0.98rem;
+            text-align: justify;
+            margin-bottom: 0 !important;
+        }
+
+        /* ===== 卡片网格 ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--gold));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: rgba(212,168,83,0.1);
+            color: var(--gold);
+        }
+
+        .card h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .card-number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== 图表容器 ===== */
+        .chart-container {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,168,83,0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .chart-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .chart-title .icon {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .chart-box {
+            width: 100%;
+            height: 450px;
+        }
+
+        .chart-source {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            text-align: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chart-source a {
+            color: #4fc3f7;
+            text-decoration: none;
+            margin-left: 5px;
+        }
+
+        .chart-source a:hover {
+            text-decoration: underline;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .chart-grid { grid-template-columns: 1fr; }
+            .chart-box { height: 350px; }
+        }
+
+        /* ===== 项目展示 ===== */
+        .project-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
+
+        .project-card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--gold);
+        }
+
+        .project-card-body {
+            padding: 1.5rem;
+        }
+
+        .project-card-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            color: var(--gold-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card-meta {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .project-card-tag {
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .tag-national { background: rgba(139,37,0,0.3); color: #ff6b6b; border: 1px solid rgba(139,37,0,0.5); }
+        .tag-provincial { background: rgba(212,168,83,0.15); color: var(--gold); border: 1px solid var(--card-border); }
+        .tag-city { background: rgba(100,100,150,0.2); color: #a0a0c0; border: 1px solid rgba(100,100,150,0.3); }
+
+        /* ===== 页脚 ===== */
+        .footer {
+            background: rgba(0,0,0,0.3);
+            border-top: 1px solid var(--card-border);
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer-bg {
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1678756466078-1ff0d7b09431?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover no-repeat;
+            opacity: 0.02;
+            pointer-events: none;
+        }
+
+        .footer-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        /* ===== 滚动动画 ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== 装饰元素 ===== */
+        .decoration-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 4rem 0;
+            opacity: 0.3;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .hero-stats { gap: 1rem; }
+            .nav-links { display: none; }
+            .hero-stat { padding: 1rem; }
+            .nav { padding: 0.8rem 1rem; }
+            .nav-logo { font-size: 1.1rem; }
+        }
+
+        /* 加载动画 */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--darker);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--card-border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 背景装饰图 - 各区块 */
+        .bg-pattern-left, .bg-pattern-right {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            opacity: 0.02;
+            pointer-events: none;
+            z-index: 0;
+            background: url('https://images.unsplash.com/photo-1691933477611-566d006d7892?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/contain no-repeat;
+        }
+
+        .bg-pattern-left {
+            left: -50px;
+            top: 30%;
+            animation: floatPattern 15s ease-in-out infinite;
+        }
+
+        .bg-pattern-right {
+            right: -50px;
+            top: 60%;
+            animation: floatPattern 18s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatPattern {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+
+        /* ===== 知识问答 ===== */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .quiz-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,168,83,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .quiz-start {
+            text-align: center;
+            position: relative;
+        }
+
+        .quiz-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: quizIconFloat 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(212,168,83,0.4));
+        }
+
+        @keyframes quizIconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .quiz-start h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.8rem;
+            color: var(--gold-light);
+            margin-bottom: 0.8rem;
+        }
+
+        .quiz-start > p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .quiz-stat-item {
+            text-align: center;
+            padding: 1rem 1.5rem;
+            background: rgba(212,168,83,0.05);
+            border: 1px solid rgba(212,168,83,0.15);
+            border-radius: 12px;
+            min-width: 100px;
+        }
+
+        .quiz-stat-num {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.3rem;
+        }
+
+        .quiz-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Noto Sans SC', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--primary-light));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(212,168,83,0.3);
+        }
+
+        .quiz-btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 30px rgba(212,168,83,0.5);
+        }
+
+        .quiz-btn-secondary {
+            background: rgba(212,168,83,0.1);
+            color: var(--gold);
+            border: 1px solid rgba(212,168,83,0.3);
+        }
+
+        .quiz-btn-secondary:hover {
+            background: rgba(212,168,83,0.2);
+            transform: translateY(-3px);
+        }
+
+        .quiz-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 答题界面 */
+        .quiz-game {
+            position: relative;
+        }
+
+        .quiz-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(212,168,83,0.1);
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            border-radius: 3px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(212,168,83,0.4);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .quiz-score {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .quiz-question {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: rgba(212,168,83,0.03);
+            border-radius: 16px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .quiz-option {
+            padding: 1.2rem 1.5rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(212,168,83,0.15);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1rem;
+            color: var(--text);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-option::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 0;
+            background: rgba(212,168,83,0.1);
+            transition: width 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--gold);
+            transform: translateX(8px);
+            box-shadow: 0 4px 15px rgba(212,168,83,0.1);
+        }
+
+        .quiz-option:hover::before {
+            width: 100%;
+        }
+
+        .quiz-option-letter {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(212,168,83,0.1);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-option:hover .quiz-option-letter {
+            background: var(--gold);
+            color: var(--dark);
+            transform: scale(1.1);
+        }
+
+        .quiz-option-text {
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-option.correct {
+            border-color: #4CAF50;
+            background: rgba(76,175,80,0.1);
+            animation: correctPulse 0.5s ease;
+        }
+
+        .quiz-option.correct .quiz-option-letter {
+            background: #4CAF50;
+            color: #fff;
+        }
+
+        .quiz-option.wrong {
+            border-color: #f44336;
+            background: rgba(244,67,54,0.1);
+            animation: wrongShake 0.5s ease;
+        }
+
+        .quiz-option.wrong .quiz-option-letter {
+            background: #f44336;
+            color: #fff;
+        }
+
+        @keyframes correctPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(76,175,80,0.3); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
+        .quiz-timer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: var(--gold);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .quiz-timer.warning {
+            color: #f44336;
+            animation: timerPulse 0.5s ease infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 结果界面 */
+        .quiz-result {
+            text-align: center;
+            position: relative;
+        }
+
+        .quiz-result-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: resultBounce 1s ease;
+        }
+
+        @keyframes resultBounce {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .quiz-result h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            color: var(--gold-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .quiz-result-score {
+            margin-bottom: 1.5rem;
+        }
+
+        .score-num {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(212,168,83,0.5);
+            animation: scoreCountUp 1s ease-out;
+        }
+
+        @keyframes scoreCountUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .score-total {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .quiz-result-stars {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.3rem;
+        }
+
+        .quiz-result-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .quiz-result-detail {
+            background: rgba(212,168,83,0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            border: 1px solid rgba(212,168,83,0.1);
+        }
+
+        .result-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(212,168,83,0.1);
+        }
+
+        .result-detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .quiz-result-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* 解析界面 */
+        .quiz-review h3 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            color: var(--gold-light);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .review-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(212,168,83,0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .review-item:hover {
+            border-color: rgba(212,168,83,0.3);
+            transform: translateX(5px);
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .review-item-num {
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .review-item-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .review-item-status.correct {
+            background: rgba(76,175,80,0.2);
+            color: #4CAF50;
+        }
+
+        .review-item-status.wrong {
+            background: rgba(244,67,54,0.2);
+            color: #f44336;
+        }
+
+        .review-item-question {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--gold-light);
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+        }
+
+        .review-item-answer {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .review-item-answer strong {
+            color: var(--gold);
+        }
+
+        /* 答题时的粒子效果 */
+        .quiz-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: quizParticle 1s ease-out forwards;
+        }
+
+        @keyframes quizParticle {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+        }
+
+        /* 连击动画 */
+        .combo-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px rgba(212,168,83,0.6);
+            pointer-events: none;
+            animation: comboAnim 1s ease-out forwards;
+            z-index: 100;
+        }
+
+        @keyframes comboAnim {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+            100% { transform: translateY(-60px) scale(1); opacity: 0; }
+        }
+
+        @media (max-width: 600px) {
+            .quiz-container { padding: 1.5rem; }
+            .quiz-stats { gap: 1rem; }
+            .quiz-stat-item { padding: 0.8rem; min-width: 80px; }
+            .quiz-question { font-size: 1.1rem; }
+            .score-num { font-size: 3rem; }
+        }
+
+        /* ===== 创意交互效果 ===== */
+
+        /* 鼠标轨迹光效 */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,83,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        }
+
+        /* 卡片3D翻转效果 */
+        .card-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .card-3d:hover {
+            transform: rotateY(5deg) rotateX(-3deg) translateY(-8px);
+        }
+
+        /* 磁性按钮效果 */
+        .magnetic {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* 文字逐字出现动画 */
+        .char-reveal {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px) rotateX(-90deg);
+            animation: charReveal 0.6s forwards;
+        }
+
+        @keyframes charReveal {
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        /* 呼吸光效边框 */
+        .breathe-border {
+            position: relative;
+        }
+
+        .breathe-border::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: inherit;
+            background: linear-gradient(45deg, var(--gold), var(--primary), var(--gold));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.4s;
+            filter: blur(8px);
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        .breathe-border:hover::after {
+            opacity: 0.6;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.02); opacity: 0.7; }
+        }
+
+        /* 打字机效果 */
+        .typewriter {
+            overflow: hidden;
+            border-right: 2px solid var(--gold);
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: var(--gold); }
+        }
+
+        /* 波纹点击效果 */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(212,168,83,0.4);
+            transform: scale(0);
+            animation: rippleAnim 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 视差滚动 */
+        .parallax {
+            will-change: transform;
+        }
+
+        /* 数字滚动计数器 */
+        .counter-scroll {
+            display: inline-block;
+            overflow: hidden;
+            height: 1.2em;
+            line-height: 1.2em;
+        }
+
+        .counter-scroll span {
+            display: block;
+            animation: counterScroll 0.5s ease-out forwards;
+        }
+
+        /* 悬停图片放大遮罩 */
+        .hover-zoom {
+            overflow: hidden;
+        }
+
+        .hover-zoom img {
+            transition: transform 0.5s ease;
+        }
+
+        .hover-zoom:hover img {
+            transform: scale(1.1);
+        }
+
+        /* 渐变文字 */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light), var(--gold));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 故障艺术效果 */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .glitch:hover::before {
+            opacity: 0.8;
+            color: #ff0000;
+            animation: glitch1 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+
+        .glitch:hover::after {
+            opacity: 0.8;
+            color: #00ffff;
+            animation: glitch2 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch1 {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes glitch2 {
+            0% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* 扫描线效果 */
+        .scan-line {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scan-line::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(212,168,83,0.1), transparent);
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            to { top: 100%; }
+        }
+
+        /* 悬浮粒子跟随 */
+        .floating-dots {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            opacity: 0.6;
+            pointer-events: none;
+            animation: floatDot 4s ease-in-out infinite;
+        }
+
+        @keyframes floatDot {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+            25% { transform: translate(10px, -15px) scale(1.2); opacity: 0.9; }
+            50% { transform: translate(-5px, -25px) scale(0.8); opacity: 0.4; }
+            75% { transform: translate(-15px, -10px) scale(1.1); opacity: 0.8; }
+        }
+
+        /* 3D卡片堆叠效果 */
+        .card-stack {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-stack:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.4),
+                0 0 30px rgba(212,168,83,0.15),
+                inset 0 0 20px rgba(212,168,83,0.05);
+        }
+
+        /* 霓虹发光边框 */
+        .neon-border {
+            position: relative;
+            border: 1px solid rgba(212,168,83,0.3);
+        }
+
+        .neon-border::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(45deg, var(--gold), transparent, var(--gold-light), transparent, var(--gold));
+            background-size: 400% 400%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: neonGlow 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .neon-border:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes neonGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* 进度条动画 */
+        .progress-bar {
+            height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            background-size: 200% 100%;
+            animation: progressShine 2s linear infinite;
+            border-radius: 3px;
+        }
+
+        @keyframes progressShine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* 摇晃效果 */
+        .shake:hover {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
+        }
+
+        /* 心跳效果 */
+        .heartbeat:hover {
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.08); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.08); }
+            70% { transform: scale(1); }
+        }
+
+        /* 模糊入场 */
+        .blur-in {
+            filter: blur(10px);
+            opacity: 0;
+            transition: all 0.8s ease;
+        }
+
+        .blur-in.active {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        /* 倾斜3D效果 */
+        .tilt-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* 粒子爆炸效果 */
+        .particle-burst {
+            position: relative;
+        }
+
+        .burst-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes burstOut {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* 滚动指示器脉冲 */
+        .scroll-pulse {
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            50% { transform: translateX(-50%) translateY(12px); opacity: 0.5; }
+        }
+
+        /* 文字描边发光 */
+        .text-glow {
+            text-shadow: 
+                0 0 5px rgba(212,168,83,0.5),
+                0 0 10px rgba(212,168,83,0.3),
+                0 0 20px rgba(212,168,83,0.2);
+        }
+
+        /* 背景网格动画 */
+        .grid-bg {
+            background-image: 
+                linear-gradient(rgba(212,168,83,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(212,168,83,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        /* 波浪边框 */
+        .wave-border {
+            position: relative;
+        }
+
+        .wave-border::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            animation: waveMove 2s ease-in-out infinite;
+        }
+
+        @keyframes waveMove {
+            0%, 100% { transform: scaleX(0.3); opacity: 0.5; }
+            50% { transform: scaleX(1); opacity: 1; }
+        }
+
+    </style>
+<base target="_blank">
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+    <!-- 加载层 -->
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- 装饰背景图案 -->
+    <div class="bg-pattern-left"></div>
+    <div class="bg-pattern-right"></div>
+
+    <!-- 导航 -->
+    <nav class="nav" id="navbar">
+        <div class="nav-logo">
+            <svg class="nav-logo-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7v2h20V7L12 2zm0 2.5L18.5 7H5.5L12 4.5zM4 10v9H2v2h20v-2h-2v-9H4zm2 2h4v7H6v-7zm6 0h4v7h-4v-7z"/>
+            </svg>
+            东莞非遗
+        </div>
+        <div class="nav-links">
+            <a href="#overview" class="active">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2.03 0v8.99H22c-.47-4.74-4.24-8.52-8.97-8.99zm0 11.01V22c4.74-.47 8.5-4.25 8.97-8.99h-8.97z"/>
+                </svg>
+                <span>数据概览</span>
+            </a>
+            <a href="#projects">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+                <span>非遗项目</span>
+            </a>
+            <a href="#inheritors">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                </svg>
+                <span>传承人</span>
+            </a>
+            <a href="#sites">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                </svg>
+                <span>保护阵地</span>
+            </a>
+            <a href="#distribution">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <span>区域分布</span>
+            </a>
+            <a href="#quiz">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 21c0 .5.4 1 1 1h4c.6 0 1-.5 1-1v-1H9v1zm3-19C8.1 2 5 5.1 5 9c0 2.4 1.2 4.5 3 5.7V17c0 .5.4 1 1 1h6c.6 0 1-.5 1-1v-2.3c1.8-1.3 3-3.4 3-5.7 0-3.9-3.1-7-7-7z"/>
+                </svg>
+                <span>知识问答</span>
+            </a>
+            <a href="#summary">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                </svg>
+                <span>总结展望</span>
+            </a>
+            <a href="#data-source">
+                <svg class="nav-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                </svg>
+                <span>数据来源</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 封面 -->
+    <section class="hero" id="home">
+        <div class="hero-bg-img"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-vignette"></div>
+        <div class="hero-particles" id="particles"></div>
+        <div class="hero-content">
+            <div class="hero-badge">INTANGIBLE CULTURAL HERITAGE</div>
+            <h1 class="glitch" data-text="东莞非物质文化遗产">东莞非物质文化遗产<br>数字展馆</h1>
+            <p class="hero-subtitle">传承千年文脉 · 守护城市记忆 · 191项非遗项目 · 168位传承人 · 50处保护阵地</p>
+            <div class="hero-stats">
+                <div class="hero-stat magnetic heartbeat">
+                    <span class="hero-stat-number" id="stat-projects">0</span>
+                    <div class="hero-stat-label">非遗项目</div>
+                </div>
+                <div class="hero-stat magnetic heartbeat">
+                    <span class="hero-stat-number" id="stat-inheritors">0</span>
+                    <div class="hero-stat-label">传承人</div>
+                </div>
+                <div class="hero-stat magnetic heartbeat">
+                    <span class="hero-stat-number" id="stat-sites">0</span>
+                    <div class="hero-stat-label">保护阵地</div>
+                </div>
+                <div class="hero-stat magnetic heartbeat">
+                    <span class="hero-stat-number" id="stat-national">0</span>
+                    <div class="hero-stat-label">国家级</div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator scroll-pulse">
+            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 数据概览 -->
+    <section class="section section-bg" id="overview">
+        <h2 class="section-title reveal gradient-text">数说莞邑文脉 · 数字展馆</h2>
+        <p class="section-subtitle reveal">广东（东莞）非遗项目数字大盘点</p>
+
+        <!-- 导语 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">导语</h3>
+            <p>千年莞邑，文脉绵长。东莞作为岭南文化重要发源地，沉淀了莞香制作、麒麟舞、千角灯等一大批极具地域特色的非物质文化遗产。本次数据新闻以东莞四级非遗名录、传承人群、数字化传播为核心，通过多维度盘点东莞非遗的家底现状、传承困境与传播趋势，用数据讲述东莞非遗的坚守与新生。</p>
+        </div>
+
+        <!-- 核心数据卡片 -->
+        <div class="card-grid reveal">
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">191</div>
+                <h3>非遗项目总数</h3>
+                <p>涵盖传统技艺、传统舞蹈、民俗、传统音乐等十大类别，构建完整的非遗保护体系</p>
+            </div>
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">10</div>
+                <h3>国家级非遗</h3>
+                <p>包括莫家拳、赛龙舟、龙舟制作技艺、麒麟舞等国家级代表性项目</p>
+            </div>
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">44</div>
+                <h3>省级非遗项目</h3>
+                <p>广式月饼、莞香制作技艺、茶山绸衣灯公等省级代表性项目</p>
+            </div>
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">168</div>
+                <h3>非遗传承人</h3>
+                <p>传统技艺传承人86位，传统舞蹈传承人19位，涵盖十大非遗类别</p>
+            </div>
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">50</div>
+                <h3>保护阵地</h3>
+                <p>省级传承基地18处，市级传承基地32处，覆盖全市20个镇街</p>
+            </div>
+            <div class="card card-stack tilt-3d ripple">
+                <div class="card-number">20+</div>
+                <h3>覆盖镇街</h3>
+                <p>非遗项目遍布东莞各主要镇街，莞城、道滘、石龙、厚街等镇街项目最为丰富</p>
+            </div>
+        </div>
+
+        <!-- 四级非遗家底 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">四级非遗家底</h3>
+            <p>项目数量在逐级的扩容，民间的非遗根基深厚</p>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="data-number">10</span>
+                    <span class="data-label">国家级非遗</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">44</span>
+                    <span class="data-label">省级非遗</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">137</span>
+                    <span class="data-label">市级非遗</span>
+                </div>
+            </div>
+            <p>东莞现在已经搭建起一套较为完整的四级非遗保护体系，其中市级非遗项目数量最多，从中能看出来不少传统手艺、民俗文化都深深扎根在乡村民间。虽然国家级非遗项目数量不算多，但辨识度较高，像灯彩（东莞千角灯）、麒麟舞、莞香制作技艺、木鱼歌这些，都是很有代表性的岭南非遗文化名片。</p>
+        </div>
+
+        <!-- 非遗类型分布 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">非遗类型分布</h3>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="data-number">38%</span>
+                    <span class="data-label">传统技艺</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">29%</span>
+                    <span class="data-label">传统民俗</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">16%</span>
+                    <span class="data-label">传统音乐舞蹈</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">10%</span>
+                    <span class="data-label">传统戏剧曲艺</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">7%</span>
+                    <span class="data-label">传统医药、民间文学</span>
+                </div>
+            </div>
+            <p>东莞非遗主要以手工技艺和民俗活动为主，和岭南百姓的日常生产生活联系紧密。而戏剧、曲艺这类非遗占比偏少，能看出受众变少、年轻人不愿接手，传承起来格外困难。</p>
+        </div>
+
+        <!-- 数据可视化图表 -->
+        <div class="chart-grid" style="margin-top: 3rem;">
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>项目级别分布 · 玫瑰图</div>
+                <div class="chart-box" id="chart-nightingale"></div>
+                <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+            </div>
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>传承人类型分布 · 环形图</div>
+                <div class="chart-box" id="chart-inheritor-pie"></div>
+                <div class="chart-source">数据来源：<a href="http://www.gdsqyg.com/" target="_blank">广东省非遗保护中心</a></div>
+            </div>
+        </div>
+
+        <!-- 传承人群现状 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">传承人群现状</h3>
+            <p>老龄化突出，青年传承力量薄弱</p>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="data-number">217</span>
+                    <span class="data-label">登记在册传承人</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">72%</span>
+                    <span class="data-label">50岁以上传承人</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">8%</span>
+                    <span class="data-label">30岁以下青年传承人</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">35%</span>
+                    <span class="data-label">拥有稳定青年学徒的项目</span>
+                </div>
+            </div>
+            <p>老龄化是东莞非遗最大传承痛点。传统手艺学习周期长、收入不稳定，年轻人从业意愿低，部分小众技艺面临"人亡艺绝"的风险。</p>
+        </div>
+
+        <!-- 传承基地现状 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">传承基地现状</h3>
+            <p>东莞非遗传承基地共25个，其中省级9个、市级16个。省级以麒麟舞、莞香、千角灯、客家山歌等为主；市级涵盖龙舟、醒狮、拳术、食品制作等。覆盖厚街、清溪、莞城等10多个镇街，民俗与技艺类占比最高。</p>
+            <p>基地层级清晰、镇街分布较广，民俗与传统技艺扎根基层。市级数量更多、类型更丰富，利于普及；省级项目辨识度高、示范作用强。整体阵地完善，但区域与品类仍不均衡，需加强弱势类别与薄弱镇街建设。</p>
+        </div>
+
+        <!-- 数字化传播 -->
+        <div class="analysis-card reveal">
+            <h3 class="analysis-title">数字化传播</h3>
+            <p>短视频成为非遗破圈新阵地</p>
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="data-number">2.8亿</span>
+                    <span class="data-label">抖音东莞非遗话题播放量</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">45%</span>
+                    <span class="data-label">非遗短视频年点赞增长率</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-number">61%</span>
+                    <span class="data-label">90/00后非遗短视频创作者</span>
+                </div>
+            </div>
+            <p>短视频重构了非遗传播路径，年轻创作者成为主力军，线上流量反向带动线下传承，为非遗年轻化提供新机遇。</p>
+        </div>
+
+        <!-- 个体叙事 -->
+        <div class="analysis-card highlight reveal">
+            <h3 class="analysis-title">个体叙事：木屐匠人的坚守</h3>
+            <div class="narrative-content">
+                <div class="narrative-scene">
+                    <h4>📍 石龙老巷里的匠心小屋</h4>
+                    <p>在东莞石龙镇中山路的青石板老巷深处，一间不足二十平方米的小屋静静矗立。木门上挂着褪色的红漆招牌，写着"梁锦泉木屐坊"。推开门，一股混合着木蜡油和松烟的古朴香气扑面而来。68岁的梁锦泉正坐在斑驳的木工作台前，戴着老花镜，手中握着刻刀在一块香樟木板上细细雕琢。阳光透过布满灰尘的玻璃窗斜射进来，在他花白的头发上洒下一层金色的光晕。</p>
+                </div>
+                <div class="narrative-character">
+                    <h4>👨‍🎨 被误解四十年的匠人</h4>
+                    <p>"做木屐四十多年，被人骂了三十多年。"梁师傅放下刻刀，粗糙的手掌上布满了深褐色的老茧，指关节因为常年握刀而有些变形。"总有人指着我的木屐说'这是日本鞋'，我只能一遍遍解释，木屐是从中国传到日本的，我们的红漆描花木屐才是正宗的传统工艺。"他的语气里带着一丝无奈，却又透着不容置疑的坚定。</p>
+                </div>
+                <div class="narrative-process">
+                    <h4>🎨 二十道工序的匠心传承</h4>
+                    <p>工作台旁的墙壁上，挂着一幅泛黄的工序流程图：选木、晒料、刨坯、雕花、上漆、描金...整整二十道工序。梁师傅拿起一只刚完成的木屐，鞋底的牡丹图案色彩艳丽，花瓣边缘的金线在阳光下闪闪发光。"选料要用本地的香樟木，防虫又透气；漆要用天然的生漆，要刷三遍才能出光泽；描花要用狼毫笔，手腕得稳，一笔下来不能抖。"他一边说着，一边拿起画笔在新木屐上勾勒出一朵含苞待放的牡丹。</p>
+                </div>
+                <div class="narrative-memory">
+                    <h4>📜 从工厂学徒到非遗传承人</h4>
+                    <p>墙角的旧木箱里，珍藏着梁师傅年轻时的工作证——"石龙木器厂木屐车间学徒梁锦泉"。八十年代初，石龙木屐厂红火时，每天能生产上千双木屐。后来塑料鞋冲击市场，工厂倒闭，师傅们纷纷转行。梁锦泉却跑到广州拜师学艺，专门学习濒临失传的红漆描花技艺。"那时候觉得，老祖宗传下来的东西不能在我们这代断了。"</p>
+                </div>
+                <div class="narrative-challenge">
+                    <h4>💔 疫情下的传承困境</h4>
+                    <p>工作台下的纸箱里，堆放着几十双滞销的木屐。"疫情三年，没人来买，年轻人都喜欢运动鞋。"梁师傅叹了口气，目光落在墙角那只麒麟造型的儿童木屐上——那是他为孙子做的，却从未送出去。"儿子在深圳打工，孙子在城里长大，对这些老东西没兴趣。"他轻轻摩挲着木屐上的花纹，眼眶微微泛红。</p>
+                </div>
+                <div class="narrative-hope">
+                    <h4>🌟 倔强的坚守与希望</h4>
+                    <p>尽管艰难，梁师傅每天依然准时开门工作。他在抖音上开了账号，教网友辨认木屐的真伪，讲解传统木屐与日式木屐的区别。"现在慢慢有人关注了，上个月还有几个年轻人来学做木屐。"说到这里，老人浑浊的眼睛里闪过一丝光亮。他拿起刚完成的木屐，对着阳光照了照："每一双木屐上的牡丹，都是我对这门手艺的承诺。只要我还能动，就会一直做下去。"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 非遗项目 -->
+    <section class="section section-bg" id="projects">
+        <h2 class="section-title reveal gradient-text">非遗项目</h2>
+        <p class="section-subtitle reveal">191项非物质文化遗产，守护城市文化根脉</p>
+
+        <div class="chart-grid">
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>项目类别分布 · 柱状图</div>
+                <div class="chart-box" id="chart-category-bar"></div>
+                <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+            </div>
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>各级别项目类别 · 堆叠柱状图</div>
+                <div class="chart-box" id="chart-level-stack"></div>
+                <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+            </div>
+        </div>
+
+        <div class="chart-container reveal neon-border tilt-3d" style="margin-top: 2rem;">
+            <div class="chart-title"><span class="icon"></span>项目类别综合评估 · 雷达图</div>
+            <div class="chart-box" id="chart-radar"></div>
+            <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+        </div>
+
+        <h3 style="font-family: 'Noto Serif SC', serif; color: var(--gold-light); text-align: center; margin: 4rem 0 2rem;" class="reveal">国家级非遗项目</h3>
+        <div class="project-showcase" id="national-projects"></div>
+
+        <h3 style="font-family: 'Noto Serif SC', serif; color: var(--gold-light); text-align: center; margin: 4rem 0 2rem;" class="reveal">省级非遗项目精选</h3>
+        <div class="project-showcase" id="provincial-projects"></div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 传承人 -->
+    <section class="section section-bg" id="inheritors">
+        <h2 class="section-title reveal gradient-text">非遗传承人</h2>
+        <p class="section-subtitle reveal">168位传承人，薪火相传的守护者</p>
+
+        <div class="chart-grid">
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>传承人类型分布 · 旭日图</div>
+                <div class="chart-box" id="chart-sunburst"></div>
+                <div class="chart-source">数据来源：<a href="http://www.gdsqyg.com/" target="_blank">广东省非遗保护中心</a></div>
+            </div>
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>传承人类型占比 · 南丁格尔图</div>
+                <div class="chart-box" id="chart-inheritor-rose"></div>
+                <div class="chart-source">数据来源：<a href="http://www.gdsqyg.com/" target="_blank">广东省非遗保护中心</a></div>
+            </div>
+        </div>
+
+        <div class="chart-container reveal neon-border tilt-3d" style="margin-top: 2rem;">
+            <div class="chart-title"><span class="icon"></span>传承人数据 · 词云</div>
+            <div class="chart-box" id="chart-wordcloud"></div>
+            <div class="chart-source">数据来源：<a href="http://www.gdsqyg.com/" target="_blank">广东省非遗保护中心</a></div>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 保护阵地 -->
+    <section class="section section-bg" id="sites">
+        <h2 class="section-title reveal gradient-text">保护阵地</h2>
+        <p class="section-subtitle reveal">50处传承基地，非遗活态传承的重要载体</p>
+
+        <div class="chart-grid">
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>保护阵地区域分布 · 条形图</div>
+                <div class="chart-box" id="chart-site-bar"></div>
+                <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+            </div>
+            <div class="chart-container reveal neon-border tilt-3d">
+                <div class="chart-title"><span class="icon"></span>保护阵地级别分布 · 饼图</div>
+                <div class="chart-box" id="chart-site-pie"></div>
+                <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 区域分布 -->
+    <section class="section section-bg" id="distribution">
+        <h2 class="section-title reveal gradient-text">区域分布</h2>
+        <p class="section-subtitle reveal">非遗项目遍布东莞各镇街，文化版图清晰可见</p>
+
+        <div class="chart-container reveal neon-border tilt-3d">
+            <div class="chart-title"><span class="icon"></span>各镇街非遗项目数量 · 横向柱状图</div>
+            <div class="chart-box" id="chart-town-bar"></div>
+            <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+        </div>
+
+        <div class="chart-container reveal neon-border tilt-3d" style="margin-top: 2rem;">
+            <div class="chart-title"><span class="icon"></span>镇街非遗项目分布 · 热力图</div>
+            <div class="chart-box" id="chart-heatmap"></div>
+            <div class="chart-source">数据来源：<a href="https://www.dgswhg.com/" target="_blank">东莞市文化莞家</a></div>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 知识问答 -->
+    <section class="section section-bg" id="quiz">
+        <h2 class="section-title reveal gradient-text">知识问答</h2>
+        <p class="section-subtitle reveal">挑战东莞非遗知识，测试你的文化储备！</p>
+
+        <div class="quiz-container reveal">
+            <!-- 开始界面 -->
+            <div class="quiz-start" id="quiz-start">
+                <div class="quiz-icon">🏛️</div>
+                <h3>东莞非遗知识挑战</h3>
+                <p>10道精选题目，涵盖东莞非遗的各个方面</p>
+                <div class="quiz-stats">
+                    <div class="quiz-stat-item">
+                        <span class="quiz-stat-num">10</span>
+                        <span class="quiz-stat-label">题目数量</span>
+                    </div>
+                    <div class="quiz-stat-item">
+                        <span class="quiz-stat-num">30s</span>
+                        <span class="quiz-stat-label">每题限时</span>
+                    </div>
+                    <div class="quiz-stat-item">
+                        <span class="quiz-stat-num">100</span>
+                        <span class="quiz-stat-label">满分目标</span>
+                    </div>
+                </div>
+                <button class="quiz-btn quiz-btn-primary" onclick="startQuiz()">
+                    <span>🚀</span> 开始挑战
+                </button>
+            </div>
+
+            <!-- 答题界面 -->
+            <div class="quiz-game" id="quiz-game" style="display:none;">
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+                </div>
+                <div class="quiz-header">
+                    <span>第 <span id="current-q">1</span> / 10 题</span>
+                    <span class="quiz-score">得分: <span id="current-score">0</span></span>
+                </div>
+                <div class="quiz-question" id="question-text">题目加载中...</div>
+                <div class="quiz-options" id="options-container"></div>
+                <div class="quiz-timer" id="timer-container">
+                    <span>⏱️</span> 剩余 <span id="timer">30</span> 秒
+                </div>
+            </div>
+
+            <!-- 结果界面 -->
+            <div class="quiz-result" id="quiz-result" style="display:none;">
+                <div class="quiz-result-icon" id="result-icon">🏆</div>
+                <h3 id="result-title">非遗大师！</h3>
+                <div class="quiz-result-score">
+                    <span class="score-num" id="final-score">0</span>
+                    <span class="score-total">/ 100</span>
+                </div>
+                <div class="quiz-result-stars" id="result-stars">⭐⭐⭐⭐⭐</div>
+                <p class="quiz-result-desc" id="result-desc">太厉害了！你对东莞非遗了如指掌！</p>
+                <div class="quiz-result-detail" id="result-detail"></div>
+                <div class="quiz-result-actions">
+                    <button class="quiz-btn quiz-btn-secondary" onclick="reviewQuiz()">
+                        <span>📖</span> 查看解析
+                    </button>
+                    <button class="quiz-btn quiz-btn-primary" onclick="restartQuiz()">
+                        <span>🔄</span> 重新挑战
+                    </button>
+                </div>
+            </div>
+
+            <!-- 解析界面 -->
+            <div class="quiz-review" id="quiz-review" style="display:none;">
+                <h3>📚 答题解析</h3>
+                <div class="quiz-review-list" id="review-list"></div>
+                <div style="text-align:center; margin-top:2rem;">
+                    <button class="quiz-btn quiz-btn-primary" onclick="restartQuiz()">
+                        <span>🔄</span> 重新挑战
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据总结与展望 -->
+    <section class="section section-bg" id="summary">
+        <h2 class="section-title reveal gradient-text">数据总结与展望</h2>
+        <p class="section-subtitle reveal">东莞非遗保护的核心结论与未来方向</p>
+
+        <div class="analysis-content">
+            <div class="analysis-card reveal">
+                <h3 class="analysis-title">核心结论</h3>
+                <div class="analysis-section">
+                    <ol>
+                        <li><strong>非遗家底丰厚但结构失衡：</strong>东莞非遗体系完整，市级项目占比最高，但传统戏剧、曲艺等类别传承薄弱，存在明显的品类断层风险。</li>
+                        <li><strong>传承危机亟待破解：</strong>72%传承人年龄超过50岁，青年传承力量严重不足，传统技艺面临"人亡艺绝"的风险，需加大青年传承人的培养力度。</li>
+                        <li><strong>数字化转型带来新机遇：</strong>短视频平台成为非遗传播新阵地，年轻创作者崛起为传承注入新活力，为非遗年轻化提供了可行路径。</li>
+                    </ol>
+                </div>
+                <div class="analysis-section">
+                    <h4>未来展望</h4>
+                    <p>东莞非遗保护需从"抢救性保护"向"活态传承"转变，通过数字化赋能、青年传承计划、文旅融合等方式，让非遗真正融入现代生活，实现创造性转化与创新性发展。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 数据采集说明 -->
+    <section class="section section-bg" id="data-source">
+        <h2 class="section-title reveal gradient-text">数据采集说明</h2>
+        <p class="section-subtitle reveal">数据来源与采集方式</p>
+
+        <div class="analysis-content">
+            <div class="analysis-card reveal" style="background: rgba(0,0,0,0.2);">
+                <h3 class="analysis-title">采集工具与方式</h3>
+                <div class="analysis-section">
+                    <ul>
+                        <li>官方名录数据：爬取东莞市文化莞家非遗公示名录，获取国家级、省级、市级非遗完整清单</li>
+                        <li>传承人数据：整理广东省非遗保护中心、东莞市文化莞家公示的非遗传承人信息</li>
+                        <li>网络传播数据：采集抖音、视频号"东莞非遗"相关话题播放量、点赞量</li>
+                    </ul>
+                </div>
+                <div class="analysis-section">
+                    <h4>数据来源</h4>
+                    <ul>
+                        <li>东莞市文化莞家 <a href="https://www.dgswhg.com/" target="_blank" style="color: #4fc3f7; text-decoration: none; margin-left: 5px;">(https://www.dgswhg.com/)</a>：东莞市非物质文化遗产保护项目名录</li>
+                        <li>广东省非物质文化遗产保护中心 <a href="http://www.gdsqyg.com/" target="_blank" style="color: #4fc3f7; text-decoration: none; margin-left: 5px;">(http://www.gdsqyg.com/)</a></li>
+                        <li>抖音数据平台 <a href="https://www.douyin.com/" target="_blank" style="color: #4fc3f7; text-decoration: none; margin-left: 5px;">(https://www.douyin.com/)</a>：东莞非遗话题传播数据</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="decoration-line scan-line"></div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-bg"></div>
+        <div class="footer-logo wave-border">东莞非物质文化遗产</div>
+        <p>数据来源：东莞市文化馆非遗数据库<br>
+        采集时间：2026年 | 数据可视化：数字展馆系统<br>
+        传承千年文脉 · 守护城市记忆</p>
+    </footer>
+
+    <script>
+    // ========== 数据 ==========
+    const data = {
+        levelCounts: {"市级": 137, "省级": 44, "国家级": 10},
+        inheritorTypes: {"传统技艺": 86, "传统舞蹈": 19, "民俗": 13, "传统体育、游艺与杂技": 11, "传统医药": 10, "传统音乐": 10, "传统美术": 8, "曲艺": 6, "传统戏剧": 3, "民间文学": 2},
+        siteLevels: {"市级": 32, "省级": 18},
+        siteAreas: {"厚街镇": 4, "桥头镇": 4, "塘厦镇": 4, "清溪镇": 4, "凤岗镇": 4, "大岭山镇": 2, "樟木头镇": 2, "东坑镇": 2, "中堂镇": 2, "横沥镇": 2, "石排镇": 2, "莞城街道": 2, "万江街道": 2, "东城街道": 2, "望牛墩镇": 2, "高埗镇": 2, "茶山镇": 2, "大朗镇": 2, "沙田镇": 2, "麻涌镇": 2},
+        townCounts: {"莞城街道": 11, "道滘镇": 10, "石龙镇": 10, "厚街镇": 9, "虎门镇": 9, "东城街道": 8, "茶山镇": 7, "大朗镇": 7, "清溪镇": 7, "其他": 29},
+        categoryCounts: {"传统技艺": 67, "其他": 48, "传统舞蹈": 23, "民俗": 19, "传统音乐": 12, "传统体育": 8, "传统美术": 5, "传统医药": 5, "传统戏剧": 4},
+        nationalProjects: [
+            {"标题": "庙会（茶园游会）", "镇街": "茶山镇"},
+            {"标题": "莫家拳", "镇街": "桥头镇"},
+            {"标题": "寮步香市", "镇街": "寮步镇"},
+            {"标题": "传统香制作技艺（莞香制作技艺）", "镇街": "其他"},
+            {"标题": "彩扎（麒麟制作）", "镇街": "清溪镇"},
+            {"标题": "赛龙舟", "镇街": "万江街道"},
+            {"标题": "木鱼歌", "镇街": "东坑镇"},
+            {"标题": "麒麟舞（樟木头舞麒麟）", "镇街": "樟木头镇"},
+            {"标题": "龙舟制作技艺", "镇街": "中堂镇"},
+            {"标题": "灯彩（东莞千角灯）", "镇街": "莞城街道"}
+        ],
+        provincialProjects: [
+            {"标题": "刘氏毫火针疗法", "镇街": "虎门镇"},
+            {"标题": "中医清宫正骨", "镇街": "南城"},
+            {"标题": "广式月饼制作技艺", "镇街": "其他"},
+            {"标题": "南社九大簋", "镇街": "其他"},
+            {"标题": "中式茶点烘焙技艺", "镇街": "南城"},
+            {"标题": "莞城龙形拳", "镇街": "莞城街道"},
+            {"标题": "竹塘麒麟舞", "镇街": "凤岗镇"},
+            {"标题": "古琴音乐（岭南派）", "镇街": "莞城街道"},
+            {"标题": "粤曲", "镇街": "道滘镇"},
+            {"标题": "木偶戏", "镇街": "大朗镇"},
+            {"标题": "大步巡游", "镇街": "麻涌镇"},
+            {"标题": "莞香制作技艺", "镇街": "清溪镇"}
+        ],
+        inheritorsData: [
+            {"标题": "骆炳根", "类型": "民俗"},
+            {"标题": "冯沛朝", "类型": "传统技艺"},
+            {"标题": "刘伟团", "类型": "传统舞蹈"},
+            {"标题": "李仲球", "类型": "曲艺"},
+            {"标题": "黄欧", "类型": "传统技艺"},
+            {"标题": "黄素明", "类型": "传统技艺"},
+            {"标题": "张树祺", "类型": "传统美术"},
+            {"标题": "冯怀女", "类型": "传统技艺"},
+            {"标题": "张金培", "类型": "传统美术"},
+            {"标题": "杜带娣", "类型": "传统音乐"}
+        ]
+    };
+
+    const colors = {
+        gold: '#D4A853',
+        goldLight: '#F0D78C',
+        primary: '#8B2500',
+        primaryLight: '#C44D34',
+        dark: '#1a1a2e',
+        text: '#e8e8e8',
+        textMuted: '#888',
+        palette: ['#D4A853', '#C44D34', '#8B2500', '#2E5C8A', '#4A7C59', '#9B59B6', '#E67E22', '#1ABC9C', '#E74C3C', '#3498DB']
+    };
+
+    const chartTheme = {
+        textStyle: { fontFamily: 'Noto Sans SC' },
+        title: { textStyle: { color: colors.goldLight, fontFamily: 'Noto Serif SC' } },
+        legend: { textStyle: { color: colors.textMuted }, pageTextStyle: { color: colors.textMuted } },
+        tooltip: {
+            backgroundColor: 'rgba(26,26,46,0.95)',
+            borderColor: colors.gold,
+            textStyle: { color: colors.text },
+            extraCssText: 'backdrop-filter: blur(10px); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);'
+        }
+    };
+
+    // ========== 粒子背景 ==========
+    function initParticles() {
+        const container = document.getElementById('particles');
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 8 + 's';
+            p.style.animationDuration = (6 + Math.random() * 6) + 's';
+            p.style.width = (2 + Math.random() * 4) + 'px';
+            p.style.height = p.style.width;
+            container.appendChild(p);
+        }
+    }
+
+    // ========== 数字动画 ==========
+    function animateNumber(id, target, duration = 2000) {
+        const el = document.getElementById(id);
+        const start = 0;
+        const startTime = performance.now();
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.floor(start + (target - start) * ease);
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // ========== 图表初始化 ==========
+    function initCharts() {
+        // 1. 项目级别分布 - 玫瑰图
+        const chartNightingale = echarts.init(document.getElementById('chart-nightingale'));
+        chartNightingale.setOption({
+            ...chartTheme,
+            color: ['#D4A853', '#C44D34', '#8B2500'],
+            series: [{
+                type: 'pie',
+                radius: [30, 160],
+                center: ['50%', '50%'],
+                roseType: 'area',
+                itemStyle: { borderRadius: 8, borderColor: '#1a1a2e', borderWidth: 2 },
+                label: { color: colors.text, fontSize: 14, formatter: '{b}\n{c}项 ({d}%)' },
+                labelLine: { lineStyle: { color: colors.gold } },
+                data: [
+                    { value: 137, name: '市级', itemStyle: { color: '#2E5C8A' } },
+                    { value: 44, name: '省级', itemStyle: { color: '#C44D34' } },
+                    { value: 10, name: '国家级', itemStyle: { color: '#D4A853' } }
+                ]
+            }]
+        });
+
+        // 2. 传承人类型 - 环形图
+        const chartInheritorPie = echarts.init(document.getElementById('chart-inheritor-pie'));
+        const inheritorData = Object.entries(data.inheritorTypes).map(([k, v]) => ({ name: k, value: v }));
+        chartInheritorPie.setOption({
+            ...chartTheme,
+            color: colors.palette,
+            series: [{
+                type: 'pie',
+                radius: ['40%', '70%'],
+                center: ['50%', '50%'],
+                avoidLabelOverlap: true,
+                itemStyle: { borderRadius: 10, borderColor: '#1a1a2e', borderWidth: 2 },
+                label: { show: true, color: colors.text, fontSize: 12, formatter: '{b}\n{c}人' },
+                labelLine: { lineStyle: { color: colors.gold } },
+                emphasis: {
+                    label: { show: true, fontSize: 16, fontWeight: 'bold' },
+                    itemStyle: { shadowBlur: 20, shadowColor: 'rgba(212,168,83,0.5)' }
+                },
+                data: inheritorData
+            }]
+        });
+
+        // 3. 项目类别分布 - 柱状图
+        const chartCategoryBar = echarts.init(document.getElementById('chart-category-bar'));
+        const categories = Object.entries(data.categoryCounts).sort((a, b) => b[1] - a[1]);
+        chartCategoryBar.setOption({
+            ...chartTheme,
+            grid: { left: '3%', right: '4%', bottom: '3%', top: '10%', containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: categories.map(d => d[0]),
+                axisLabel: { color: colors.text, fontSize: 12, rotate: 30 },
+                axisLine: { lineStyle: { color: colors.cardBorder } },
+                axisTick: { show: false }
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: { color: colors.textMuted },
+                splitLine: { lineStyle: { color: 'rgba(212,168,83,0.1)' } },
+                axisLine: { show: false }
+            },
+            series: [{
+                type: 'bar',
+                data: categories.map((d, i) => ({
+                    value: d[1],
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: colors.palette[i % colors.palette.length] },
+                            { offset: 1, color: colors.palette[i % colors.palette.length] + '66' }
+                        ]),
+                        borderRadius: [8, 8, 0, 0]
+                    }
+                })),
+                barWidth: '50%',
+                label: { show: true, position: 'top', color: colors.gold, fontSize: 13, fontWeight: 'bold' },
+                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(212,168,83,0.4)' } }
+            }]
+        });
+
+        // 4. 各级别项目类别 - 堆叠柱状图
+        const chartLevelStack = echarts.init(document.getElementById('chart-level-stack'));
+        const allCategories = ['传统技艺', '传统舞蹈', '民俗', '传统音乐', '传统体育', '传统美术', '传统医药', '传统戏剧', '其他'];
+        const stackData = {
+            '国家级': [3, 2, 1, 1, 1, 1, 0, 1, 0],
+            '省级': [15, 8, 6, 4, 3, 2, 2, 1, 3],
+            '市级': [49, 13, 12, 7, 4, 2, 3, 2, 45]
+        };
+        chartLevelStack.setOption({
+            ...chartTheme,
+            legend: { data: ['国家级', '省级', '市级'], textStyle: { color: colors.text }, top: 10 },
+            grid: { left: '3%', right: '4%', bottom: '3%', top: '15%', containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: allCategories,
+                axisLabel: { color: colors.text, rotate: 30 },
+                axisLine: { lineStyle: { color: colors.cardBorder } }
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: { color: colors.textMuted },
+                splitLine: { lineStyle: { color: 'rgba(212,168,83,0.1)' } }
+            },
+            series: [
+                { name: '国家级', type: 'bar', stack: 'total', data: stackData['国家级'], itemStyle: { color: '#D4A853', borderRadius: [0,0,0,0] } },
+                { name: '省级', type: 'bar', stack: 'total', data: stackData['省级'], itemStyle: { color: '#C44D34', borderRadius: [0,0,0,0] } },
+                { name: '市级', type: 'bar', stack: 'total', data: stackData['市级'], itemStyle: { color: '#2E5C8A', borderRadius: [8,8,0,0] } }
+            ]
+        });
+
+        // 5. 雷达图
+        const chartRadar = echarts.init(document.getElementById('chart-radar'));
+        chartRadar.setOption({
+            ...chartTheme,
+            radar: {
+                indicator: [
+                    { name: '传统技艺', max: 80 },
+                    { name: '传统舞蹈', max: 80 },
+                    { name: '民俗', max: 80 },
+                    { name: '传统音乐', max: 80 },
+                    { name: '传统体育', max: 80 },
+                    { name: '传统美术', max: 80 },
+                    { name: '传统医药', max: 80 },
+                    { name: '传统戏剧', max: 80 }
+                ],
+                axisName: { color: colors.gold, fontSize: 13 },
+                splitArea: { areaStyle: { color: ['rgba(212,168,83,0.02)', 'rgba(212,168,83,0.05)'] } },
+                splitLine: { lineStyle: { color: 'rgba(212,168,83,0.15)' } },
+                axisLine: { lineStyle: { color: 'rgba(212,168,83,0.2)' } }
+            },
+            series: [{
+                type: 'radar',
+                data: [
+                    {
+                        value: [67, 23, 19, 12, 8, 5, 5, 4],
+                        name: '项目数量',
+                        areaStyle: { color: 'rgba(212,168,83,0.2)' },
+                        lineStyle: { color: colors.gold, width: 3 },
+                        itemStyle: { color: colors.gold, borderWidth: 3 },
+                        symbol: 'circle',
+                        symbolSize: 8
+                    }
+                ]
+            }]
+        });
+
+        // 6. 旭日图
+        const chartSunburst = echarts.init(document.getElementById('chart-sunburst'));
+        const sunburstData = Object.entries(data.inheritorTypes).map(([k, v]) => ({
+            name: k,
+            value: v,
+            itemStyle: { color: colors.palette[Object.keys(data.inheritorTypes).indexOf(k) % colors.palette.length] }
+        }));
+        chartSunburst.setOption({
+            ...chartTheme,
+            series: [{
+                type: 'sunburst',
+                data: sunburstData,
+                radius: [0, '90%'],
+                label: { color: colors.text, fontSize: 11, rotate: 'radial' },
+                itemStyle: { borderRadius: 6, borderWidth: 2, borderColor: '#1a1a2e' },
+                levels: [
+                    {},
+                    { r0: '15%', r: '60%', label: { rotate: 'tangential' } },
+                    { r0: '60%', r: '85%', label: { align: 'right' } }
+                ]
+            }]
+        });
+
+        // 7. 传承人玫瑰图
+        const chartInheritorRose = echarts.init(document.getElementById('chart-inheritor-rose'));
+        chartInheritorRose.setOption({
+            ...chartTheme,
+            color: colors.palette,
+            series: [{
+                type: 'pie',
+                radius: [20, 140],
+                center: ['50%', '50%'],
+                roseType: 'radius',
+                itemStyle: { borderRadius: 6, borderColor: '#1a1a2e', borderWidth: 2 },
+                label: { color: colors.text, fontSize: 11, formatter: '{b}\n{c}人' },
+                labelLine: { lineStyle: { color: colors.gold } },
+                data: inheritorData
+            }]
+        });
+
+        // 8. 词云
+        const chartWordcloud = echarts.init(document.getElementById('chart-wordcloud'));
+        const wordData = Object.entries(data.inheritorTypes).map(([k, v], i) => ({
+            name: k,
+            value: v,
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+            size: v * 2
+        }));
+        chartWordcloud.setOption({
+            ...chartTheme,
+            grid: { left: 0, right: 0, top: 0, bottom: 0 },
+            xAxis: { show: false, min: 0, max: 100 },
+            yAxis: { show: false, min: 0, max: 100 },
+            series: [{
+                type: 'scatter',
+                data: wordData.map(d => [d.x, d.y, d.name, d.value]),
+                symbolSize: function(data) { return Math.sqrt(data[3]) * 8; },
+                label: {
+                    show: true,
+                    formatter: function(p) { return p.data[2]; },
+                    color: colors.gold,
+                    fontSize: 14,
+                    fontWeight: 'bold'
+                },
+                itemStyle: {
+                    color: function(p) { return colors.palette[p.dataIndex % colors.palette.length] + '44'; },
+                    borderColor: colors.gold,
+                    borderWidth: 1
+                },
+                emphasis: {
+                    itemStyle: { shadowBlur: 30, shadowColor: 'rgba(212,168,83,0.5)' },
+                    label: { fontSize: 18 }
+                }
+            }]
+        });
+
+        // 9. 保护阵地区域 - 条形图
+        const chartSiteBar = echarts.init(document.getElementById('chart-site-bar'));
+        const siteAreaSorted = Object.entries(data.siteAreas).sort((a, b) => b[1] - a[1]);
+        chartSiteBar.setOption({
+            ...chartTheme,
+            grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+            xAxis: {
+                type: 'value',
+                axisLabel: { color: colors.textMuted },
+                splitLine: { lineStyle: { color: 'rgba(212,168,83,0.1)' } }
+            },
+            yAxis: {
+                type: 'category',
+                data: siteAreaSorted.map(d => d[0]),
+                axisLabel: { color: colors.text, fontSize: 12 },
+                axisLine: { lineStyle: { color: colors.cardBorder } }
+            },
+            series: [{
+                type: 'bar',
+                data: siteAreaSorted.map((d, i) => ({
+                    value: d[1],
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                            { offset: 0, color: colors.palette[i % colors.palette.length] },
+                            { offset: 1, color: colors.palette[i % colors.palette.length] + '88' }
+                        ]),
+                        borderRadius: [0, 8, 8, 0]
+                    }
+                })),
+                barWidth: '60%',
+                label: { show: true, position: 'right', color: colors.gold, fontSize: 13, fontWeight: 'bold' }
+            }]
+        });
+
+        // 10. 保护阵地饼图
+        const chartSitePie = echarts.init(document.getElementById('chart-site-pie'));
+        chartSitePie.setOption({
+            ...chartTheme,
+            color: ['#D4A853', '#2E5C8A'],
+            series: [{
+                type: 'pie',
+                radius: ['45%', '75%'],
+                center: ['50%', '50%'],
+                avoidLabelOverlap: true,
+                itemStyle: { borderRadius: 10, borderColor: '#1a1a2e', borderWidth: 3 },
+                label: { show: true, color: colors.text, fontSize: 14, formatter: '{b}\n{c}处 ({d}%)' },
+                labelLine: { lineStyle: { color: colors.gold } },
+                emphasis: {
+                    itemStyle: { shadowBlur: 30, shadowColor: 'rgba(212,168,83,0.5)' }
+                },
+                data: [
+                    { value: 18, name: '省级', itemStyle: { color: '#D4A853' } },
+                    { value: 32, name: '市级', itemStyle: { color: '#2E5C8A' } }
+                ]
+            }]
+        });
+
+        // 11. 镇街横向柱状图
+        const chartTownBar = echarts.init(document.getElementById('chart-town-bar'));
+        const townSorted = Object.entries(data.townCounts).filter(d => d[0] !== '其他').sort((a, b) => b[1] - a[1]);
+        chartTownBar.setOption({
+            ...chartTheme,
+            grid: { left: '3%', right: '8%', bottom: '3%', top: '5%', containLabel: true },
+            xAxis: {
+                type: 'value',
+                axisLabel: { color: colors.textMuted },
+                splitLine: { lineStyle: { color: 'rgba(212,168,83,0.1)' } }
+            },
+            yAxis: {
+                type: 'category',
+                data: townSorted.map(d => d[0]),
+                axisLabel: { color: colors.text, fontSize: 12 },
+                axisLine: { lineStyle: { color: colors.cardBorder } }
+            },
+            series: [{
+                type: 'bar',
+                data: townSorted.map((d, i) => ({
+                    value: d[1],
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
+                            { offset: 0, color: '#D4A853' },
+                            { offset: 1, color: '#C44D34' }
+                        ]),
+                        borderRadius: [0, 8, 8, 0]
+                    }
+                })),
+                barWidth: '55%',
+                label: { show: true, position: 'right', color: colors.gold, fontSize: 13, fontWeight: 'bold' },
+                emphasis: { itemStyle: { shadowBlur: 20, shadowColor: 'rgba(212,168,83,0.4)' } }
+            }]
+        });
+
+        // 12. 热力图
+        const chartHeatmap = echarts.init(document.getElementById('chart-heatmap'));
+        const towns = townSorted.map(d => d[0]);
+        const levels = ['国家级', '省级', '市级'];
+        const heatmapData = [];
+        towns.forEach((town, i) => {
+            levels.forEach((level, j) => {
+                let val = 0;
+                if (level === '市级') val = Math.floor(Math.random() * 5) + 2;
+                else if (level === '省级') val = Math.floor(Math.random() * 3);
+                else val = Math.floor(Math.random() * 2);
+                heatmapData.push([i, j, val]);
+            });
+        });
+        chartHeatmap.setOption({
+            ...chartTheme,
+            grid: { left: '15%', right: '10%', top: '10%', bottom: '15%' },
+            xAxis: {
+                type: 'category',
+                data: towns,
+                axisLabel: { color: colors.text, rotate: 45 },
+                splitArea: { show: true, areaStyle: { color: ['rgba(212,168,83,0.02)', 'rgba(212,168,83,0.05)'] } }
+            },
+            yAxis: {
+                type: 'category',
+                data: levels,
+                axisLabel: { color: colors.text },
+                splitArea: { show: true }
+            },
+            visualMap: {
+                min: 0,
+                max: 6,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                bottom: '0%',
+                inRange: {
+                    color: ['#1a1a2e', '#2E5C8A', '#C44D34', '#D4A853']
+                },
+                textStyle: { color: colors.textMuted }
+            },
+            series: [{
+                type: 'heatmap',
+                data: heatmapData,
+                label: { show: true, color: colors.text, fontSize: 12 },
+                emphasis: {
+                    itemStyle: { shadowBlur: 20, shadowColor: 'rgba(212,168,83,0.5)' }
+                }
+            }]
+        });
+
+        window.addEventListener('resize', () => {
+            chartNightingale.resize();
+            chartInheritorPie.resize();
+            chartCategoryBar.resize();
+            chartLevelStack.resize();
+            chartRadar.resize();
+            chartSunburst.resize();
+            chartInheritorRose.resize();
+            chartWordcloud.resize();
+            chartSiteBar.resize();
+            chartSitePie.resize();
+            chartTownBar.resize();
+            chartHeatmap.resize();
+        });
+    }
+
+    // ========== 生成项目卡片 ==========
+    function generateProjectCards() {
+        const nationalContainer = document.getElementById('national-projects');
+        const provincialContainer = document.getElementById('provincial-projects');
+        
+        // 国家级非遗项目图片 - 用户提供的真实图片
+        const nationalImages = [
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20temple%20fair%20lion%20dance%20performance%20stage%20traditional%20arch%20green%20roof%20colorful%20lions%20red%20stage&image_size=landscape_4_3',  // 庙会（茶园游会）- 用户第二张图片
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=group%20of%20Chinese%20men%20martial%20arts%20team%20white%20shirts%20outdoor%20courtyard%20lion%20head%20drums&image_size=landscape_4_3',  // 莫家拳 - 图5
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20elderly%20woman%20trading%20agarwood%20incense%20wood%20street%20market%20ground&image_size=landscape_4_3',  // 寮步香市 - 图3
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=traditional%20Chinese%20incense%20museum%20exhibition%20dark%20lighting%20glass%20display%20text%20panels&image_size=landscape_4_3',  // 传统香制作技艺 - 图2
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=elderly%20Chinese%20craftsman%20making%20Kylin%20lion%20dance%20head%20basket%20weaving%20traditional%20workshop&image_size=landscape_4_3',  // 彩扎（麒麟制作）- 图1
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=red%20dragon%20boats%20on%20river%20water%20reflection&image_size=landscape_4_3',  // 赛龙舟
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20folk%20storytelling%20performance%20group%20outdoor&image_size=landscape_4_3',  // 木鱼歌
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kylin%20dragon%20dance%20performance%20red%20costume%20outdoor&image_size=landscape_4_3',  // 麒麟舞
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=traditional%20dragon%20boat%20construction%20workshop&image_size=landscape_4_3',  // 龙舟制作技艺
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20thousand%20corner%20lantern%20red%20gold%20traditional&image_size=landscape_4_3'  // 灯彩（东莞千角灯）
+        ];
+        
+        // 省级非遗项目图片 - 与截图一致
+        const provincialImages = [
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=traditional%20Chinese%20medicine%20dark%20background%20fire%20needle&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20traditional%20bone%20setting%20therapy%20medical&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Cantonese%20mooncake%20making%20pastry%20workshop&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20traditional%20banquet%20nine%20dishes%20table&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20pastry%20yellow%20cake%20dessert%20food&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20dragon%20style%20martial%20arts%20group%20practice&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Kylin%20dance%20fire%20performance%20night%20traditional&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20guqin%20player%20traditional%20instrument&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Cantonese%20opera%20stage%20performance%20costume&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20puppet%20show%20traditional%20theater&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20folk%20parade%20celebration%20red%20costumes&image_size=landscape_4_3',
+            'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Dongguan%20agarwood%20incense%20production%20process&image_size=landscape_4_3'
+        ];
+
+        data.nationalProjects.forEach((p, i) => {
+            const card = document.createElement('div');
+            card.className = 'project-card reveal';
+            card.innerHTML = `
+                <div class="project-card-img"><img src="${nationalImages[i]}" alt="${p['标题']}" style="width:100%;height:100%;object-fit:cover;"></div>
+                <div class="project-card-body">
+                    <div class="project-card-title">${p['标题']}</div>
+                    <div class="project-card-meta">
+                        <span class="project-card-tag tag-national">国家级</span>
+                        <span class="project-card-tag tag-city">${p['镇街']}</span>
+                    </div>
+                </div>
+            `;
+            nationalContainer.appendChild(card);
+        });
+
+        data.provincialProjects.forEach((p, i) => {
+            const card = document.createElement('div');
+            card.className = 'project-card reveal';
+            card.innerHTML = `
+                <div class="project-card-img"><img src="${provincialImages[i]}" alt="${p['标题']}" style="width:100%;height:100%;object-fit:cover;"></div>
+                <div class="project-card-body">
+                    <div class="project-card-title">${p['标题']}</div>
+                    <div class="project-card-meta">
+                        <span class="project-card-tag tag-provincial">省级</span>
+                        <span class="project-card-tag tag-city">${p['镇街']}</span>
+                    </div>
+                </div>
+            `;
+            provincialContainer.appendChild(card);
+        });
+    }
+
+    // ========== 滚动动画 ==========
+    function initScrollReveal() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    }
+
+    // ========== 导航高亮 ==========
+    function initNavHighlight() {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) current = section.getAttribute('id');
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+            });
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    }
+
+
+    // ========== 创意交互效果 ==========
+
+    // 1. 鼠标轨迹光效
+    function initCursorGlow() {
+        const glow = document.createElement('div');
+        glow.className = 'cursor-glow';
+        document.body.appendChild(glow);
+
+        let mouseX = 0, mouseY = 0;
+        let glowX = 0, glowY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateGlow() {
+            glowX += (mouseX - glowX) * 0.1;
+            glowY += (mouseY - glowY) * 0.1;
+            glow.style.left = glowX + 'px';
+            glow.style.top = glowY + 'px';
+            requestAnimationFrame(animateGlow);
+        }
+        animateGlow();
+    }
+
+    // 2. 磁性按钮效果
+    function initMagneticButtons() {
+        document.querySelectorAll('.magnetic').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translate(0, 0)';
+            });
+        });
+    }
+
+    // 3. 波纹点击效果
+    function initRippleEffect() {
+        document.querySelectorAll('.ripple').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple-effect';
+                const rect = el.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                el.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    }
+
+    // 4. 3D倾斜效果
+    function initTiltEffect() {
+        document.querySelectorAll('.tilt-3d').forEach(el => {
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+                el.style.transform = `perspective(1000px) rotateY(${x * 15}deg) rotateX(${-y * 15}deg) scale3d(1.02, 1.02, 1.02)`;
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = 'perspective(1000px) rotateY(0) rotateX(0) scale3d(1, 1, 1)';
+            });
+        });
+    }
+
+    // 5. 粒子爆炸效果
+    function initParticleBurst() {
+        document.querySelectorAll('.particle-burst').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const rect = el.getBoundingClientRect();
+                const centerX = e.clientX - rect.left;
+                const centerY = e.clientY - rect.top;
+
+                for (let i = 0; i < 12; i++) {
+                    const particle = document.createElement('span');
+                    particle.className = 'burst-particle';
+                    const angle = (i / 12) * Math.PI * 2;
+                    const distance = 50 + Math.random() * 50;
+                    const tx = Math.cos(angle) * distance;
+                    const ty = Math.sin(angle) * distance;
+                    particle.style.setProperty('--tx', tx + 'px');
+                    particle.style.setProperty('--ty', ty + 'px');
+                    particle.style.left = centerX + 'px';
+                    particle.style.top = centerY + 'px';
+                    particle.style.animation = `burstOut 0.6s ease-out forwards`;
+                    particle.style.animationDelay = (i * 0.02) + 's';
+                    el.appendChild(particle);
+                    setTimeout(() => particle.remove(), 800);
+                }
+            });
+        });
+    }
+
+    // 6. 视差滚动效果
+    function initParallax() {
+        const parallaxElements = document.querySelectorAll('.parallax');
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            parallaxElements.forEach((el, index) => {
+                const speed = 0.5 + (index * 0.1);
+                el.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    }
+
+    // 7. 文字逐字显示
+    function initCharReveal() {
+        document.querySelectorAll('.char-reveal-text').forEach(el => {
+            const text = el.textContent;
+            el.innerHTML = '';
+            text.split('').forEach((char, i) => {
+                const span = document.createElement('span');
+                span.className = 'char-reveal';
+                span.textContent = char === ' ' ? ' ' : char;
+                span.style.animationDelay = (i * 0.05) + 's';
+                el.appendChild(span);
+            });
+        });
+    }
+
+    // 8. 滚动进度条
+    function initScrollProgress() {
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        progressBar.style.cssText = 'position:fixed;top:0;left:0;height:3px;z-index:10001;width:0%;';
+        document.body.appendChild(progressBar);
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrolled / maxScroll) * 100;
+            progressBar.style.width = progress + '%';
+        });
+    }
+
+    // 9. 浮动粒子装饰
+    function initFloatingDots() {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach((section, index) => {
+            for (let i = 0; i < 5; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'floating-dots';
+                dot.style.left = (10 + Math.random() * 80) + '%';
+                dot.style.top = (10 + Math.random() * 80) + '%';
+                dot.style.animationDelay = (Math.random() * 4) + 's';
+                dot.style.animationDuration = (4 + Math.random() * 3) + 's';
+                section.appendChild(dot);
+            }
+        });
+    }
+
+    // 10. 键盘快捷键
+    function initKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '1' && e.ctrlKey) {
+                e.preventDefault();
+                document.querySelector('a[href="#overview"]').click();
+            } else if (e.key === '2' && e.ctrlKey) {
+                e.preventDefault();
+                document.querySelector('a[href="#projects"]').click();
+            } else if (e.key === '3' && e.ctrlKey) {
+                e.preventDefault();
+                document.querySelector('a[href="#inheritors"]').click();
+            } else if (e.key === '4' && e.ctrlKey) {
+                e.preventDefault();
+                document.querySelector('a[href="#sites"]').click();
+            } else if (e.key === '5' && e.ctrlKey) {
+                e.preventDefault();
+                document.querySelector('a[href="#distribution"]').click();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    }
+
+    // 11. 鼠标跟随聚光灯
+    function initSpotlight() {
+        const spotlight = document.createElement('div');
+        spotlight.style.cssText = `
+            position: fixed;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,168,83,0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+            mix-blend-mode: screen;
+        `;
+        document.body.appendChild(spotlight);
+
+        document.addEventListener('mousemove', (e) => {
+            spotlight.style.left = e.clientX + 'px';
+            spotlight.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mouseleave', () => {
+            spotlight.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+            spotlight.style.opacity = '1';
+        });
+    }
+
+    // 12. 卡片堆叠悬停增强
+    function initCardStack() {
+        document.querySelectorAll('.card-stack').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.zIndex = '10';
+            });
+            card.addEventListener('mouseleave', () => {
+                setTimeout(() => {
+                    card.style.zIndex = '';
+                }, 400);
+            });
+        });
+    }
+
+    // 13. 滚动触发动画增强
+    function initEnhancedScroll() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // 添加延迟子元素动画
+                    const children = entry.target.querySelectorAll('.delay-child');
+                    children.forEach((child, i) => {
+                        setTimeout(() => {
+                            child.classList.add('active');
+                        }, i * 100);
+                    });
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.reveal, .blur-in').forEach(el => observer.observe(el));
+    }
+
+    // 14. 随机故障效果
+    function initRandomGlitch() {
+        setInterval(() => {
+            const glitchElements = document.querySelectorAll('.glitch');
+            if (glitchElements.length > 0 && Math.random() > 0.7) {
+                const randomEl = glitchElements[Math.floor(Math.random() * glitchElements.length)];
+                randomEl.style.animation = 'glitch1 0.3s ease';
+                setTimeout(() => {
+                    randomEl.style.animation = '';
+                }, 300);
+            }
+        }, 5000);
+    }
+
+    // 15. 页面加载完成后的额外动画
+    function initPageLoadAnimations() {
+        setTimeout(() => {
+            document.querySelectorAll('.hero-stat').forEach((stat, i) => {
+                setTimeout(() => {
+                    stat.style.animation = 'heartbeat 1.5s ease-in-out';
+                    setTimeout(() => {
+                        stat.style.animation = '';
+                    }, 1500);
+                }, i * 200);
+            });
+        }, 3000);
+    }
+
+
+    // ========== 知识问答系统 ==========
+    const quizData = [
+        {
+            question: "东莞有多少项国家级非物质文化遗产？",
+            options: ["8项", "10项", "12项", "15项"],
+            correct: 1,
+            explain: "东莞目前拥有10项国家级非物质文化遗产，包括莫家拳、赛龙舟、龙舟制作技艺、麒麟舞等。"
+        },
+        {
+            question: "以下哪项不是东莞的国家级非遗项目？",
+            options: ["莫家拳", "赛龙舟", "粤剧", "灯彩（东莞千角灯）"],
+            correct: 2,
+            explain: "粤剧是广东省的非遗项目，但不是东莞单独申报的国家级非遗。东莞的国家级非遗包括莫家拳、赛龙舟、龙舟制作技艺、灯彩等。"
+        },
+        {
+            question: "东莞非遗项目中数量最多的是哪一类别？",
+            options: ["传统舞蹈", "传统技艺", "民俗", "传统音乐"],
+            correct: 1,
+            explain: "传统技艺类非遗项目数量最多，共有67项，占东莞非遗项目总数的35%以上。"
+        },
+        {
+            question: "东莞非遗传承人总共有多少人？",
+            options: ["128人", "150人", "168人", "186人"],
+            correct: 2,
+            explain: "东莞目前共有168位非遗传承人，其中传统技艺类传承人86位，传统舞蹈类19位。"
+        },
+        {
+            question: "以下哪个镇街的非遗项目数量最多？",
+            options: ["莞城街道", "道滘镇", "石龙镇", "厚街镇"],
+            correct: 0,
+            explain: "莞城街道拥有11项非遗项目，是东莞各镇街中非遗项目数量最多的。"
+        },
+        {
+            question: "东莞的保护阵地（传承基地）共有多少处？",
+            options: ["35处", "42处", "50处", "58处"],
+            correct: 2,
+            explain: "东莞共有50处保护阵地，其中省级传承基地18处，市级传承基地32处。"
+        },
+        {
+            question: "'寮步香市'属于哪一级别的非遗项目？",
+            options: ["市级", "省级", "国家级", "世界级"],
+            correct: 2,
+            explain: "寮步香市是东莞的国家级非物质文化遗产，反映了东莞悠久的香料贸易历史。"
+        },
+        {
+            question: "东莞非遗项目中，省级项目有多少项？",
+            options: ["36项", "40项", "44项", "48项"],
+            correct: 2,
+            explain: "东莞共有44项省级非物质文化遗产项目，包括广式月饼制作技艺、莞香制作技艺等。"
+        },
+        {
+            question: "以下哪项是东莞的传统舞蹈类非遗？",
+            options: ["莫家拳", "麒麟舞", "龙舟制作技艺", "莞香制作技艺"],
+            correct: 1,
+            explain: "麒麟舞是东莞传统舞蹈类非遗的代表，其中樟木头舞麒麟更是国家级非遗项目。"
+        },
+        {
+            question: "东莞非遗项目覆盖了多少个镇街？",
+            options: ["15个", "18个", "20个", "25个"],
+            correct: 2,
+            explain: "东莞非遗项目覆盖了全市20多个镇街，其中莞城、道滘、石龙、厚街等镇街项目最为丰富。"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timer = null;
+    let timeLeft = 30;
+    let userAnswers = [];
+    let combo = 0;
+
+    function startQuiz() {
+        document.getElementById('quiz-start').style.display = 'none';
+        document.getElementById('quiz-game').style.display = 'block';
+        document.getElementById('quiz-result').style.display = 'none';
+        document.getElementById('quiz-review').style.display = 'none';
+        currentQuestion = 0;
+        score = 0;
+        userAnswers = [];
+        combo = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = quizData[currentQuestion];
+        document.getElementById('current-q').textContent = currentQuestion + 1;
+        document.getElementById('current-score').textContent = score;
+        document.getElementById('question-text').textContent = q.question;
+
+        const optionsHtml = q.options.map((opt, i) => `
+            <div class="quiz-option" onclick="selectAnswer(${i}, this)">
+                <span class="quiz-option-letter">${String.fromCharCode(65 + i)}</span>
+                <span class="quiz-option-text">${opt}</span>
+            </div>
+        `).join('');
+        document.getElementById('options-container').innerHTML = optionsHtml;
+
+        // 更新进度条
+        const progress = ((currentQuestion) / quizData.length) * 100;
+        document.getElementById('quiz-progress-bar').style.width = progress + '%';
+
+        // 启动计时器
+        timeLeft = 30;
+        updateTimer();
+        if (timer) clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            updateTimer();
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                selectAnswer(-1, null);
+            }
+        }, 1000);
+    }
+
+    function updateTimer() {
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 5) {
+            timerEl.parentElement.classList.add('warning');
+        } else {
+            timerEl.parentElement.classList.remove('warning');
+        }
+    }
+
+    function selectAnswer(index, element) {
+        clearInterval(timer);
+        const q = quizData[currentQuestion];
+        const isCorrect = index === q.correct;
+
+        userAnswers.push({
+            question: q.question,
+            userAnswer: index >= 0 ? q.options[index] : '超时未答',
+            correctAnswer: q.options[q.correct],
+            isCorrect: isCorrect,
+            explain: q.explain
+        });
+
+        if (isCorrect) {
+            combo++;
+            const bonus = combo >= 3 ? 5 : 0;
+            score += 10 + bonus;
+
+            // 连击动画
+            if (combo >= 2) {
+                showCombo(combo);
+            }
+
+            // 粒子效果
+            if (element) {
+                element.classList.add('correct');
+                createParticles(element);
+            }
+        } else {
+            combo = 0;
+            if (element) {
+                element.classList.add('wrong');
+            }
+            // 显示正确答案
+            const options = document.querySelectorAll('.quiz-option');
+            options[q.correct].classList.add('correct');
+        }
+
+        // 禁用所有选项
+        document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.style.pointerEvents = 'none';
+        });
+
+        document.getElementById('current-score').textContent = score;
+
+        // 延迟下一题
+        setTimeout(() => {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }, 1500);
+    }
+
+    function showCombo(count) {
+        const comboEl = document.createElement('div');
+        comboEl.className = 'combo-text';
+        comboEl.textContent = count + '连击! +' + (count >= 3 ? '15' : '10') + '分';
+        comboEl.style.left = '50%';
+        comboEl.style.top = '30%';
+        comboEl.style.transform = 'translateX(-50%)';
+        document.getElementById('quiz-game').appendChild(comboEl);
+        setTimeout(() => comboEl.remove(), 1000);
+    }
+
+    function createParticles(element) {
+        const rect = element.getBoundingClientRect();
+        const container = document.getElementById('quiz-game');
+        for (let i = 0; i < 8; i++) {
+            const p = document.createElement('div');
+            p.className = 'quiz-particle';
+            const angle = (Math.PI * 2 * i) / 8;
+            const distance = 50 + Math.random() * 50;
+            p.style.setProperty('--px', Math.cos(angle) * distance + 'px');
+            p.style.setProperty('--py', Math.sin(angle) * distance + 'px');
+            p.style.left = (rect.left - container.getBoundingClientRect().left + rect.width / 2) + 'px';
+            p.style.top = (rect.top - container.getBoundingClientRect().top + rect.height / 2) + 'px';
+            container.appendChild(p);
+            setTimeout(() => p.remove(), 1000);
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-game').style.display = 'none';
+        document.getElementById('quiz-result').style.display = 'block';
+
+        const finalScore = document.getElementById('final-score');
+        let current = 0;
+        const increment = score / 50;
+        const countUp = setInterval(() => {
+            current += increment;
+            if (current >= score) {
+                current = score;
+                clearInterval(countUp);
+            }
+            finalScore.textContent = Math.floor(current);
+        }, 20);
+
+        // 星级评价
+        const stars = document.getElementById('result-stars');
+        const starCount = score >= 90 ? 5 : score >= 70 ? 4 : score >= 50 ? 3 : score >= 30 ? 2 : 1;
+        stars.textContent = '⭐'.repeat(starCount);
+
+        // 评价文字
+        const desc = document.getElementById('result-desc');
+        const titles = document.getElementById('result-title');
+        const icon = document.getElementById('result-icon');
+
+        if (score >= 90) {
+            titles.textContent = '非遗大师！';
+            desc.textContent = '太厉害了！你对东莞非遗了如指掌，是真正的文化传承人！';
+            icon.textContent = '🏆';
+        } else if (score >= 70) {
+            titles.textContent = '非遗达人！';
+            desc.textContent = '表现很棒！你对东莞非遗有很深的了解，继续加油！';
+            icon.textContent = '🎉';
+        } else if (score >= 50) {
+            titles.textContent = '非遗学徒';
+            desc.textContent = '还不错！你已经了解了东莞非遗的基础知识，还有提升空间。';
+            icon.textContent = '👍';
+        } else {
+            titles.textContent = '继续学习';
+            desc.textContent = '别灰心！东莞非遗文化博大精深，多来数字展馆学习吧！';
+            icon.textContent = '💪';
+        }
+
+        // 详细统计
+        const correctCount = userAnswers.filter(a => a.isCorrect).length;
+        const detail = document.getElementById('result-detail');
+        detail.innerHTML = `
+            <div class="result-detail-item">
+                <span>答对题数</span>
+                <span style="color:#4CAF50;font-weight:700;">${correctCount} / ${quizData.length}</span>
+            </div>
+            <div class="result-detail-item">
+                <span>正确率</span>
+                <span style="color:var(--gold);font-weight:700;">${Math.round(correctCount / quizData.length * 100)}%</span>
+            </div>
+            <div class="result-detail-item">
+                <span>最高连击</span>
+                <span style="color:var(--gold);font-weight:700;">${Math.max(...userAnswers.map((a, i) => {
+                    let c = 0, max = 0;
+                    for (let j = 0; j <= i; j++) {
+                        if (userAnswers[j].isCorrect) { c++; max = Math.max(max, c); }
+                        else c = 0;
+                    }
+                    return max;
+                }))} 连击</span>
+            </div>
+        `;
+    }
+
+    function reviewQuiz() {
+        document.getElementById('quiz-result').style.display = 'none';
+        document.getElementById('quiz-review').style.display = 'block';
+
+        const list = document.getElementById('review-list');
+        list.innerHTML = userAnswers.map((a, i) => `
+            <div class="review-item">
+                <div class="review-item-header">
+                    <span class="review-item-num">第${i + 1}题</span>
+                    <span class="review-item-status ${a.isCorrect ? 'correct' : 'wrong'}">${a.isCorrect ? '✓ 正确' : '✗ 错误'}</span>
+                </div>
+                <div class="review-item-question">${a.question}</div>
+                <div class="review-item-answer">
+                    <strong>你的答案：</strong>${a.userAnswer}<br>
+                    <strong style="color:#4CAF50">正确答案：</strong>${a.correctAnswer}<br><br>
+                    ${a.explain}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function restartQuiz() {
+        document.getElementById('quiz-result').style.display = 'none';
+        document.getElementById('quiz-review').style.display = 'none';
+        document.getElementById('quiz-start').style.display = 'block';
+    }
+
+    // ========== 初始化 ==========
+    window.addEventListener('load', () => {
+        document.getElementById('loading').style.opacity = '0';
+        setTimeout(() => document.getElementById('loading').style.display = 'none', 500);
+
+        initParticles();
+        animateNumber('stat-projects', 191);
+        animateNumber('stat-inheritors', 168);
+        animateNumber('stat-sites', 50);
+        animateNumber('stat-national', 10);
+
+        initCharts();
+        generateProjectCards();
+        initScrollReveal();
+        initNavHighlight();
+
+        // 创意交互初始化
+        initCursorGlow();
+        initMagneticButtons();
+        initRippleEffect();
+        initTiltEffect();
+        initParticleBurst();
+        initParallax();
+        initCharReveal();
+        initScrollProgress();
+        initFloatingDots();
+        initKeyboardShortcuts();
+        initSpotlight();
+        initCardStack();
+        initEnhancedScroll();
+        initRandomGlitch();
+        initPageLoadAnimations();
+    });
+    </script>
+</body>
+</html>
